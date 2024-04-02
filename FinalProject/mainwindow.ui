@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QFrame" name="frame">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>30</y>
+      <width>541</width>
+      <height>491</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QGraphicsView" name="displayScreen">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>110</y>
+       <width>361</width>
+       <height>271</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="upButton">
+     <property name="geometry">
+      <rect>
+       <x>420</x>
+       <y>190</y>
+       <width>83</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>↑</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="downButton">
+     <property name="geometry">
+      <rect>
+       <x>420</x>
+       <y>240</y>
+       <width>83</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>↓</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="startButton">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>400</y>
+       <width>83</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>START</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pauseButton">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>400</y>
+       <width>83</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>PAUSE</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="stopButton">
+     <property name="geometry">
+      <rect>
+       <x>310</x>
+       <y>400</y>
+       <width>83</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>STOP</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="menuButton">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>70</y>
+       <width>83</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>MENU</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="powerButton">
+     <property name="geometry">
+      <rect>
+       <x>430</x>
+       <y>20</y>
+       <width>83</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>POWER</string>
+     </property>
+    </widget>
+    <widget class="QGraphicsView" name="contactLight">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>10</y>
+       <width>31</width>
+       <height>41</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QGraphicsView" name="treatmentLight">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>10</y>
+       <width>31</width>
+       <height>41</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QGraphicsView" name="contactLostLight">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>10</y>
+       <width>31</width>
+       <height>41</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="option1">
+     <property name="geometry">
+      <rect>
+       <x>60</x>
+       <y>120</y>
+       <width>341</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QLabel" name="option2">
+     <property name="geometry">
+      <rect>
+       <x>60</x>
+       <y>190</y>
+       <width>341</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QLabel" name="option3">
+     <property name="geometry">
+      <rect>
+       <x>60</x>
+       <y>250</y>
+       <width>341</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="selectButton">
+     <property name="geometry">
+      <rect>
+       <x>420</x>
+       <y>280</y>
+       <width>83</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>SELECT</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
