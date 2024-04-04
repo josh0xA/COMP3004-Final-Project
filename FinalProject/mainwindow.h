@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "handlesessions.h"
+#include <QList>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -14,9 +16,12 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void lightsOff();
 
 private:
     Ui::MainWindow *ui;
+    QTimer *batteryTimer;
+    HandleSessions *sessionPTR;
 
 private slots:
     void upButton();
@@ -27,7 +32,12 @@ private slots:
     void startButton();
     void stopButton();
     void selectButton();
+    void decreaseBatteryLevel();
+    void onDone();
+    void threeButtonsOff();
 
+signals:
+    void selectValueSignal(QString s); ///
 
 };
 #endif // MAINWINDOW_H
