@@ -14,7 +14,6 @@ private:
     QTimer *sessionTimer;
     int duration;
     void updateProgress();
-    bool isPaused = false;
 
 
 public:
@@ -25,6 +24,8 @@ public:
     void resume();
     void stop();
     void finished();
+
+    bool isPaused = false;
 
 
 signals:

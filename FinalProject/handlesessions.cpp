@@ -9,7 +9,7 @@ HandleSessions::HandleSessions(QObject *parent) : QObject(parent), duration(0) {
 
 void HandleSessions::start() {
         duration = 0;
-        sessionTimer->start(100); // 1000 = 1 second,      100 = 0.1 second
+        sessionTimer->start(10); // 1000 = 1 second,      100 = 0.1 second
 }
 
 // Called when pause button is clicked

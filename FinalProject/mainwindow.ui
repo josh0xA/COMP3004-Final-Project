@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>675</width>
+    <height>570</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,8 +17,8 @@
    <widget class="QFrame" name="frame">
     <property name="geometry">
      <rect>
-      <x>110</x>
-      <y>30</y>
+      <x>70</x>
+      <y>20</y>
       <width>541</width>
       <height>491</height>
      </rect>
@@ -32,17 +32,17 @@
     <widget class="QGraphicsView" name="displayScreen">
      <property name="geometry">
       <rect>
-       <x>50</x>
-       <y>110</y>
-       <width>361</width>
-       <height>271</height>
+       <x>10</x>
+       <y>60</y>
+       <width>431</width>
+       <height>351</height>
       </rect>
      </property>
     </widget>
     <widget class="QPushButton" name="upButton">
      <property name="geometry">
       <rect>
-       <x>420</x>
+       <x>450</x>
        <y>190</y>
        <width>83</width>
        <height>25</height>
@@ -55,7 +55,7 @@
     <widget class="QPushButton" name="downButton">
      <property name="geometry">
       <rect>
-       <x>420</x>
+       <x>450</x>
        <y>240</y>
        <width>83</width>
        <height>25</height>
@@ -71,8 +71,8 @@
      </property>
      <property name="geometry">
       <rect>
-       <x>190</x>
-       <y>400</y>
+       <x>180</x>
+       <y>430</y>
        <width>83</width>
        <height>25</height>
       </rect>
@@ -87,8 +87,8 @@
      </property>
      <property name="geometry">
       <rect>
-       <x>70</x>
-       <y>400</y>
+       <x>60</x>
+       <y>430</y>
        <width>83</width>
        <height>25</height>
       </rect>
@@ -103,8 +103,8 @@
      </property>
      <property name="geometry">
       <rect>
-       <x>310</x>
-       <y>400</y>
+       <x>300</x>
+       <y>430</y>
        <width>83</width>
        <height>25</height>
       </rect>
@@ -116,8 +116,8 @@
     <widget class="QPushButton" name="menuButton">
      <property name="geometry">
       <rect>
-       <x>50</x>
-       <y>70</y>
+       <x>450</x>
+       <y>110</y>
        <width>83</width>
        <height>25</height>
       </rect>
@@ -129,7 +129,7 @@
     <widget class="QPushButton" name="powerButton">
      <property name="geometry">
       <rect>
-       <x>430</x>
+       <x>450</x>
        <y>20</y>
        <width>83</width>
        <height>25</height>
@@ -211,7 +211,7 @@
     <widget class="QPushButton" name="selectButton">
      <property name="geometry">
       <rect>
-       <x>420</x>
+       <x>450</x>
        <y>280</y>
        <width>83</width>
        <height>25</height>
@@ -253,8 +253,8 @@
      </property>
      <property name="geometry">
       <rect>
-       <x>150</x>
-       <y>310</y>
+       <x>140</x>
+       <y>350</y>
        <width>151</width>
        <height>51</height>
       </rect>
@@ -273,10 +273,53 @@
     <widget class="QListWidget" name="listWidget">
      <property name="geometry">
       <rect>
-       <x>50</x>
-       <y>110</y>
-       <width>361</width>
-       <height>191</height>
+       <x>10</x>
+       <y>60</y>
+       <width>431</width>
+       <height>281</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="treatmentLabel">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>250</y>
+       <width>311</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <italic>true</italic>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Treatment</string>
+     </property>
+    </widget>
+    <widget class="QProgressBar" name="progressBar">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>300</y>
+       <width>118</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="value">
+      <number>24</number>
+     </property>
+    </widget>
+    <widget class="QCustomPlot" name="plotWidget" native="true">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>70</y>
+       <width>411</width>
+       <height>161</height>
       </rect>
      </property>
     </widget>
@@ -287,13 +330,21 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>675</width>
      <height>22</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QCustomPlot</class>
+   <extends>QWidget</extends>
+   <header>qcustomplot.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
