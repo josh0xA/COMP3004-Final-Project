@@ -27,12 +27,16 @@ public:
 
     bool isPaused = false;
 
+    bool getIsPaused();
+
+
 
 signals:
     void sessionUpdated(int timeT);
     void paused();
     void resumed();
     void done();
+    void quit();
 
 
 public slots:

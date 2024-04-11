@@ -5,6 +5,7 @@
 #include <QCoreApplication>
 #include <math.h>
 #include <iostream>
+#include <QDebug>
 
 BaselineCalculator::BaselineCalculator(QObject *parent)
     : QObject(parent),
@@ -76,6 +77,7 @@ void BaselineCalculator::startBaselineCalculation() {
 
 void BaselineCalculator::applyTreatment() {
     const int treatmentDuration = 16; // 1/16th of a second for one second
+    isTimerPaused = false;
     for (int siteIndex = 0; siteIndex < baselineFrequencies.size(); ++siteIndex) {
         int baselineFrequency = baselineFrequencies[siteIndex];
         emit currentElectrode(siteIndex);
@@ -84,28 +86,30 @@ void BaselineCalculator::applyTreatment() {
         int count = 0; // Initialize the count for each site
 
         connect(treatmentTimer, &QTimer::timeout, this, [this, siteIndex, baselineFrequency, treatmentTimer, treatmentDuration, &count]() mutable {
-            if (count < treatmentDuration) {
-                int treatmentFrequency = baselineFrequency + 5; // Apply a 5Hz offset
-                // Here, you would apply the treatmentFrequency to the EEG device or simulation
-                emit treatmentApplied(siteIndex, treatmentFrequency);
-                count++;
-                int progress = (count * 100) / treatmentDuration; // Calculate progress percentage
-                emit treatmentProgress(progress); // Emit the progress signal
-            } else {
-                treatmentTimer->stop(); // Stop the timer after 1 second
-                treatmentTimer->deleteLater(); // Ensure the timer is cleaned up
-                count = 0;
-                if (siteIndex >= baselineFrequencies.size() - 1) {
-                    // All treatments have been applied
-                    emit treatmentComplete(); // Signal that treatment is complete
+            if(!isTimerPaused && !hasQuit) {
+                if (count < treatmentDuration) {
+                    int treatmentFrequency = baselineFrequency + 5; // Apply a 5Hz offset
+                    // Here, you would apply the treatmentFrequency to the EEG device or simulation
+                    emit treatmentApplied(siteIndex, treatmentFrequency);
+                    count++;
+                    int progress = (count * 100) / treatmentDuration; // Calculate progress percentage
+                    emit treatmentProgress(progress); // Emit the progress signal
+                } else {
+                    treatmentTimer->stop(); // Stop the timer after 1 second
+                    treatmentTimer->deleteLater(); // Ensure the timer is cleaned up
+                    count = 0;
+                    if (siteIndex >= baselineFrequencies.size() - 1) {
+                        // All treatments have been applied
+                        emit treatmentComplete(); // Signal that treatment is complete
+                    }
                 }
             }
         });
+            treatmentTimer->start();
+            while (treatmentTimer->isActive()) {
+                QCoreApplication::processEvents(); // Process events to avoid blocking the UI
+            }
 
-        treatmentTimer->start();
-        while (treatmentTimer->isActive()) {
-            QCoreApplication::processEvents(); // Process events to avoid blocking the UI
-        }
     }
 }
 
@@ -121,11 +125,26 @@ void BaselineCalculator::reset()
     currentEEGSite = 0;
     baselineCount = 0;
     baselineFrequencies.clear();
+    hasQuit = false;
+
 }
 
 void BaselineCalculator::calculateBaseline()
 {
 // implement
 }
+
+
+void BaselineCalculator::handlePause() {
+    isTimerPaused = !isTimerPaused;
+}
+
+void BaselineCalculator::handleQuit() {
+    hasQuit = true;
+  //  qDebug() << "test";
+//
+}
+
+
 
 

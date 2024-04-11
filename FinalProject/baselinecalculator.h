@@ -18,6 +18,9 @@ public:
     QVector<double> generateWaveform(int electrodeIndex, int sampleRate, int duration);
     double processSignal(const QVector<double>& waveData);
     double generateDominantFrequencyForSite(int siteIndex);
+    void handlePause();
+    void handleQuit();
+
 
 
 signals:
@@ -38,6 +41,9 @@ private:
 
     const int baselineDuration = 60; // Duration in seconds for baseline calculation
     QVector<int> baselineFrequencies;
+
+    bool isTimerPaused = false;
+    bool hasQuit = false;
 
 private slots:
     void calculateBaseline();

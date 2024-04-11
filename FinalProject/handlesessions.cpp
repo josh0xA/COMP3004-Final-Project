@@ -51,6 +51,8 @@ void HandleSessions::stop() {
         sessionTimer->stop();
     }
     duration = 0;
+    emit quit();
+
 }
 
 // Called when session is finished
@@ -67,6 +69,10 @@ void HandleSessions::finished() {
 
 
 
+bool HandleSessions::getIsPaused() {
+   return isPaused;
+   //isPaused = !isPaused;
+}
 
 
 

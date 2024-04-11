@@ -64,6 +64,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(contactLossTimer, &QTimer::timeout, this, &MainWindow::handleContactLost);
     contactLossTimer->setSingleShot(true); // Only trigger once
 
+    connect(sessionPTR, &HandleSessions::paused, baselineCalculator, &BaselineCalculator::handlePause);
+    connect(sessionPTR, &HandleSessions::quit, baselineCalculator, &BaselineCalculator::handleQuit);
+
 
     // Hiding the date input and list on startup
     ui->dateInput->hide();
@@ -136,8 +139,8 @@ void MainWindow::selectButton(){
 
             // Enabling the buttons since on correct screen
             ui->startButton->setEnabled(true);
-            ui->stopButton->setEnabled(true);
-            ui->pauseButton->setEnabled(true);
+            ui->stopButton->setEnabled(false);
+            ui->pauseButton->setEnabled(false);
 
         } else if (ui->option2->palette().color(QPalette::Window) == Qt::yellow) {
             //show session log
@@ -189,6 +192,10 @@ void MainWindow::powerButton(){
 
        systemOn = true;
        ui->menuButton->setEnabled(true);
+       ui->selectButton->setEnabled(true);
+       ui->downButton->setEnabled(true);
+       ui->upButton->setEnabled(true);
+
 
        // Setting up the battery
        batteryTimer = new QTimer(this);
@@ -238,17 +245,17 @@ void MainWindow::menuButton() {
 void MainWindow::pauseButton() {
     qInfo("Pause Button Pressed");
 
-    if (systemOn && contactEstablished) {
-        if (!sessionPTR->isPaused) {
-            // Pause the session
-            ui->pauseButton->setText("Resume"); // Change the button text to indicate resuming is possible
-        } else {
-            // Resume the session
-            ui->pauseButton->setText("Pause"); // Change the button text back to "Pause"
-        }
-    } else {
-        QMessageBox::warning(this, "Cannot Pause", "The system is not currently in an active session or contact is lost.");
-    }
+//    if (systemOn && contactEstablished) {
+//        if (!sessionPTR->isPaused) {
+//            // Pause the session
+//            ui->pauseButton->setText("Resume"); // Change the button text to indicate resuming is possible
+//        } else {
+//            // Resume the session
+//            ui->pauseButton->setText("Pause"); // Change the button text back to "Pause"
+//        }
+//    } else {
+//        QMessageBox::warning(this, "Cannot Pause", "The system is not currently in an active session or contact is lost.");
+//    }
 }
 
 void MainWindow::startButton() {
@@ -259,18 +266,20 @@ void MainWindow::startButton() {
     ui->contactLight->setStyleSheet("background-color: blue; border-radius: 9px;");
     ui->contactLostLight->setStyleSheet("background-color: gray; border-radius: 9px;");
     // Check if the system is on and contact is established
-    if (systemOn && contactEstablished) {
+   if (systemOn && contactEstablished) {
           // Start a new session
-          baselineCalculator->startSession();
-          sessionActive = true;
+           ui->startButton->setEnabled(false); // Disable the start button
+           ui->stopButton->setEnabled(true); // Enable the stop button
+           ui->pauseButton->setEnabled(true);
+           baselineCalculator->startSession();
+           sessionActive = true;
 
           // Update the UI
-          ui->startButton->setEnabled(false); // Disable the start button
-          ui->stopButton->setEnabled(true); // Enable the stop button
-          ui->treatmentLabel->show(); // Show the treatment label
-          ui->progressBar->show(); // Show the progress bar
-      } else {
-          QMessageBox::warning(this, "Cannot Start", "The system is not on or contact is not established.");
+
+     // ui->treatmentLabel->show(); // Show the treatment label
+     // ui->progressBar->show(); // Show the progress bar
+    } else {
+      QMessageBox::warning(this, "Cannot Start", "The system is not on or contact is not established.");
       }
 }
 
@@ -288,8 +297,8 @@ void MainWindow::stopButton() {
     // Reset the UI
     ui->startButton->setEnabled(true);
     ui->stopButton->setEnabled(false);
-    ui->treatmentLabel->hide();
-    ui->progressBar->hide();
+//    ui->treatmentLabel->hide();
+//    ui->progressBar->hide();
 }
 
 
