@@ -7,7 +7,7 @@ This is to show our progress for the draft, programmatically - everything is goi
 ![image](https://github.com/josh0xA/COMP3004-Final-Project/assets/29878743/202f6d68-9d61-425b-8dba-758394acb0cd)
 ![image](https://github.com/josh0xA/COMP3004-Final-Project/assets/29878743/73ed18e9-ece7-41a3-bc3b-afa151619fdd) <br/>
 ### Signal Processing Logic, Waveform Generation, and Baseline Calculation
-```
+```cpp
 double BaselineCalculator::processSignal(const QVector<double>& waveData) {
     double sum = std::accumulate(waveData.begin(), waveData.end(), 0.0);
     return sum / waveData.size();
