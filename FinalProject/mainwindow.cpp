@@ -100,7 +100,6 @@ void MainWindow::upButton(){
         }
     }
 
-
 }
 
 void MainWindow::downButton() {
@@ -168,10 +167,10 @@ void MainWindow::selectButton(){
 void MainWindow::plotWaveform(int electrodeIndex) {
     QVector<double> waveform = baselineCalculator->generateWaveform(electrodeIndex, 100, 1); // Sample rate 100 Hz, duration 1 second
     QVector<double> x(waveform.size());
-    std::iota(x.begin(), x.end(), 0); // Generate x-axis values
+    std::iota(x.begin(), x.end(), 0);
 
-    ui->plotWidget->clearGraphs(); // Clear any existing graphs
-    ui->plotWidget->addGraph(); // Add a new graph
+    ui->plotWidget->clearGraphs();
+    ui->plotWidget->addGraph();
     ui->plotWidget->graph(0)->setData(x, waveform); // Set the data for the graph
     ui->plotWidget->graph(0)->setPen(QPen(Qt::blue)); // Set the line color to blue
     ui->plotWidget->xAxis->setRange(0, waveform.size()); // Set the x-axis range
@@ -182,6 +181,31 @@ void MainWindow::plotWaveform(int electrodeIndex) {
 void MainWindow::updateElectrode() {
     currentElectrodeIndex = (currentElectrodeIndex + 1) % BaselineCalculator::totalNumberOfSites;
     plotWaveform(currentElectrodeIndex);
+}
+
+void MainWindow::forcePower() {
+    systemOn = false;  // Set the system status to off
+    ui->powerButton->setStyleSheet("background-color: green;");
+    threeButtonsOff();
+
+    functionalButtonsOff();
+
+    lightsOff();
+    ui->option1->setText("");
+    ui->dateInput->hide();
+    ui->option2->setText("");
+    ui->listWidget->hide();
+    ui->option3->setText("");
+    ui->treatmentLabel->setText("");
+    ui->progressBar->hide();
+    ui->plotWidget->clearGraphs();
+    ui->plotWidget->hide();
+
+    if (batteryTimer->isActive()) {
+        batteryTimer->stop();  // Stop the battery timer as well
+    }
+    QMessageBox::warning(this, "Battery Depleted", "The device has been powered off due to battery depletion.");
+
 }
 
 void MainWindow::powerButton(){
@@ -196,30 +220,29 @@ void MainWindow::powerButton(){
        ui->downButton->setEnabled(true);
        ui->upButton->setEnabled(true);
 
-
        // Setting up the battery
        batteryTimer = new QTimer(this);
        connect(batteryTimer, &QTimer::timeout, this, &MainWindow::decreaseBatteryLevel);
        batteryTimer->start(30000); // Every 30 seconds
 
      } else {
-       ui->powerButton->setStyleSheet("background-color: green;");
-       threeButtonsOff();
-       lightsOff(); ui->option1->setText("");
-       ui->dateInput->hide(); ui->option2->setText("");
-       ui->listWidget->hide(); ui->option3->setText("");
-       ui->treatmentLabel->setText("");
-       ui->progressBar->hide();
-       ui->plotWidget->clearGraphs();
+        ui->powerButton->setStyleSheet("background-color: green;");
+        threeButtonsOff();
+        functionalButtonsOff();
+        lightsOff(); ui->option1->setText("");
+        ui->dateInput->hide(); ui->option2->setText("");
+        ui->listWidget->hide(); ui->option3->setText("");
+        ui->treatmentLabel->setText("");
+        ui->progressBar->hide();
+        ui->plotWidget->clearGraphs(); ui->plotWidget->hide();
 
 
-       if (batteryTimer && batteryTimer->isActive()) {
-           batteryTimer->stop();
-       }
-
-
+        if (batteryTimer && batteryTimer->isActive()) {
+            batteryTimer->stop();
+        }
   }
 }
+
 
 void MainWindow::menuButton() {
     qInfo("Menu Button Pressed");
@@ -245,17 +268,7 @@ void MainWindow::menuButton() {
 void MainWindow::pauseButton() {
     qInfo("Pause Button Pressed");
 
-//    if (systemOn && contactEstablished) {
-//        if (!sessionPTR->isPaused) {
-//            // Pause the session
-//            ui->pauseButton->setText("Resume"); // Change the button text to indicate resuming is possible
-//        } else {
-//            // Resume the session
-//            ui->pauseButton->setText("Pause"); // Change the button text back to "Pause"
-//        }
-//    } else {
-//        QMessageBox::warning(this, "Cannot Pause", "The system is not currently in an active session or contact is lost.");
-//    }
+    // Implement further
 }
 
 void MainWindow::startButton() {
@@ -274,10 +287,6 @@ void MainWindow::startButton() {
            baselineCalculator->startSession();
            sessionActive = true;
 
-          // Update the UI
-
-     // ui->treatmentLabel->show(); // Show the treatment label
-     // ui->progressBar->show(); // Show the progress bar
     } else {
       QMessageBox::warning(this, "Cannot Start", "The system is not on or contact is not established.");
       }
@@ -302,20 +311,32 @@ void MainWindow::stopButton() {
 }
 
 
-// Decreaseing battery every 30 seconds device is on, can add more features for certain activies
 void MainWindow::decreaseBatteryLevel() {
     int val = ui->battery->value();
-    if(val != 0) {
+    if (val > 0) {
         int newValue = val - 1;
         ui->battery->setValue(newValue);
+
+        if (newValue <= 20) {
+            ui->battery->setStyleSheet("QProgressBar::chunk { background-color: red; }");
+        } else {
+            ui->battery->setStyleSheet("");
+        }
+        if (newValue == 0) {
+            forcePower();
+        }
+
     } else {
         batteryTimer->stop();
+        ui->battery->setStyleSheet("QProgressBar::chunk { background-color: red; }");
+        forcePower();
     }
 }
 
+// Finish this
 void MainWindow::checkContactStatus() {
     // For simulation, randomly change contact status
-    if (qrand() % 40 == 0 && contactEstablished) { // Simulate contact loss once in every 80 checks
+    if (qrand() % 40 == 0 && contactEstablished) { // Simulate contact loss
         contactEstablished = false;
         ui->contactLostLight->setStyleSheet("background-color: red;"); // Flash red light
         contactLossTimer->start(5 * 60 * 1000); // Start 5-minute timer for contact reestablishment
@@ -327,18 +348,14 @@ void MainWindow::checkContactStatus() {
     }
 }
 
-
+// Finish this
 void MainWindow::handleContactLost() {
     // Automatically turn off the device and erase the session
-    systemOn = false;
-    ui->powerButton->setStyleSheet("background-color: green;");
-    lightsOff();
-    threeButtonsOff();
-    ui->dateInput->hide();
-    ui->listWidget->hide();
-    ui->treatmentLabel->hide();
+    QMessageBox::critical(this, "Contact Not Reestablished", "Failed to reestablish contact. The session will be terminated and the device will now turn off.");
+    forcePower();
 }
 
+// Finish this
 void MainWindow::handleContactReestablished() {
     if (!contactEstablished) {
         contactEstablished = true;
@@ -359,6 +376,15 @@ void MainWindow::threeButtonsOff() {
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(false);
     ui->pauseButton->setEnabled(false);
+
+}
+
+
+void MainWindow::functionalButtonsOff() {
+    ui->menuButton->setEnabled(false);
+    ui->selectButton->setEnabled(false);
+    ui->upButton->setEnabled(false);
+    ui->downButton->setEnabled(false);
 }
 
 

@@ -45,12 +45,14 @@ private slots:
 
     void pauseButton();
     void startButton();
+    void forcePower();
     void stopButton();
     void selectButton();
 
     void decreaseBatteryLevel();
     void onDone();
     void threeButtonsOff();
+    void functionalButtonsOff();
     void onBaselineCalculated(int siteIndex);
 
     void onAllBaselinesCalculated();
@@ -65,6 +67,7 @@ private slots:
 
     void plotWaveform(int electrodeIndex);
     void updateElectrode();
+
 
 
 signals:
