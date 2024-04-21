@@ -354,11 +354,11 @@ void MainWindow::chargeBattery() {
 }
 
 void MainWindow::checkContactStatus() {
-    if (qrand() % 40 == 0) {  // Simulate contact loss
+    if (qrand() % 40 == 0) {  // Simulate contact loss (change the modulo operand for testing purposes, ideal range 5 - 10)
         contactEstablished = false;
         if (!contactEstablished) {
             ui->contactLostLight->setStyleSheet("background-color: red;");
-            contactLossTimer->start(10000);
+            contactLossTimer->start(5 * 60 * 1000); // change to 10 000 for testing purposes
             ui->contactButton->setEnabled(true);
             QMessageBox::warning(this, "Contact Lost", "Contact with the EEG device has been lost. Please reestablish contact.");
 
