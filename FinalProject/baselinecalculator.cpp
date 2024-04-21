@@ -1,5 +1,5 @@
 #include "baselinecalculator.h"
-#include <QtGlobal> // For qrand()
+#include <QtGlobal>
 #include <QTimer>
 #include <QEventLoop>
 #include <QCoreApplication>
@@ -49,7 +49,8 @@ double BaselineCalculator::generateDominantFrequencyForSite(int siteIndex) {
 
 
     double frequencyVariance = (maxFrequency - minFrequency) / BaselineCalculator::totalNumberOfSites;
-    double dominantFrequency = minFrequency + (frequencyVariance * (siteIndex % BaselineCalculator::totalNumberOfSites)) + static_cast<double>(qrand() % static_cast<int>(frequencyVariance));
+    double dominantFrequency = minFrequency + (frequencyVariance * (siteIndex % BaselineCalculator::totalNumberOfSites)) +
+            static_cast<double>(qrand() % static_cast<int>(frequencyVariance));
 
     return dominantFrequency;
 }
@@ -119,10 +120,7 @@ void BaselineCalculator::reset()
 
 }
 
-void BaselineCalculator::calculateBaseline()
-{
-// implement
-}
+void BaselineCalculator::calculateBaseline() {}
 
 
 void BaselineCalculator::handlePause() {
@@ -131,8 +129,6 @@ void BaselineCalculator::handlePause() {
 
 void BaselineCalculator::handleQuit() {
     hasQuit = true;
-  //  qDebug() << "test";
-//
 }
 
 

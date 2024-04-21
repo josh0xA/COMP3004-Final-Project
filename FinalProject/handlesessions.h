@@ -29,8 +29,6 @@ public:
 
     bool getIsPaused();
 
-
-
 signals:
     void sessionUpdated(int timeT);
     void paused();

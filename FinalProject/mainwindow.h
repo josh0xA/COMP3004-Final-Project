@@ -33,6 +33,8 @@ private:
     QTimer *contactLossTimer;
 
     QTimer *electrodeUpdateTimer;
+    QTimer *rechargeTimer;
+
 
     int currentElectrodeIndex;
     bool treatmentPaused;
@@ -48,6 +50,7 @@ private slots:
     void forcePower();
     void stopButton();
     void selectButton();
+    void contactButton();
 
     void decreaseBatteryLevel();
     void onDone();
@@ -67,7 +70,8 @@ private slots:
 
     void plotWaveform(int electrodeIndex);
     void updateElectrode();
-
+    void chargeBattery();
+    void incrementBatteryLevel();
 
 
 signals:

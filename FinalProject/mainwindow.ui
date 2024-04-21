@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>COMP3004 Final Project - Team 78</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QFrame" name="frame">
@@ -333,6 +333,43 @@
        <width>411</width>
        <height>161</height>
       </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="batteryCharge">
+     <property name="geometry">
+      <rect>
+       <x>400</x>
+       <y>460</y>
+       <width>83</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 120, 0)</string>
+     </property>
+     <property name="text">
+      <string>Charge</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="contactButton">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>440</y>
+       <width>41</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>5</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color:rgb(237, 51, 59)</string>
+     </property>
+     <property name="text">
+      <string>Contact</string>
      </property>
     </widget>
    </widget>

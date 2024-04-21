@@ -26,11 +26,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->stopButton, SIGNAL (released()), this, SLOT (stopButton()));
 
     HandleSessions *sessionPTR = new HandleSessions(this);
-    // Updates the remaining time and progress bar when session is on
     connect(sessionPTR, &HandleSessions::sessionUpdated, this, [this](int timeT) {
         int secondsLeft = 100 - timeT;
         int progress = timeT;
-        //qDebug() << secondsLeft;
 
         QString timeString = QString::asprintf("Time Remaining -> %2d Seconds", secondsLeft);
         QString progressString = QString::asprintf("Progress = %3d%", progress);
@@ -38,14 +36,14 @@ MainWindow::MainWindow(QWidget *parent)
         ui->option2->setText(progressString);
     });
 
-    // Connecting buttons to functions in handlesessions
+
     connect(ui->startButton, &QPushButton::clicked, sessionPTR, &HandleSessions::start);
     connect(ui->pauseButton, &QPushButton::clicked, sessionPTR, &HandleSessions::pause);
     connect(ui->stopButton, &QPushButton::clicked, sessionPTR, &HandleSessions::stop);
 
     connect(sessionPTR, &HandleSessions::done, this, &MainWindow::onDone);
 
-    baselineCalculator = new BaselineCalculator(this); // Ensure it's properly instantiated
+    baselineCalculator = new BaselineCalculator(this);
     connect(baselineCalculator, &BaselineCalculator::baselineCalculated, this, &MainWindow::onBaselineCalculated);
     connect(baselineCalculator, &BaselineCalculator::allBaselinesCalculated, this, &MainWindow::onAllBaselinesCalculated);
     connect(baselineCalculator, &BaselineCalculator::treatmentApplied, this, &MainWindow::onTreatmentApplied);
@@ -55,20 +53,22 @@ MainWindow::MainWindow(QWidget *parent)
     connect(baselineCalculator, &BaselineCalculator::currentElectrode, this, &MainWindow::plotWaveform);
 
 
-    contactEstablished = true; // Assume initial contact is established
+    contactEstablished = true;
     contactTimer = new QTimer(this);
     connect(contactTimer, &QTimer::timeout, this, &MainWindow::checkContactStatus);
-    contactTimer->start(1000); // Check contact status every second
+    contactTimer->start(5000);
 
     contactLossTimer = new QTimer(this);
     connect(contactLossTimer, &QTimer::timeout, this, &MainWindow::handleContactLost);
-    contactLossTimer->setSingleShot(true); // Only trigger once
+    contactLossTimer->setSingleShot(true);
 
     connect(sessionPTR, &HandleSessions::paused, baselineCalculator, &BaselineCalculator::handlePause);
     connect(sessionPTR, &HandleSessions::quit, baselineCalculator, &BaselineCalculator::handleQuit);
+    connect(ui->batteryCharge, &QPushButton::clicked, this, &MainWindow::chargeBattery);
+    rechargeTimer = new QTimer(this);
+    connect(rechargeTimer, &QTimer::timeout, this, &MainWindow::incrementBatteryLevel);
+    connect(ui->contactButton, &QPushButton::clicked, this, &MainWindow::contactButton);
 
-
-    // Hiding the date input and list on startup
     ui->dateInput->hide();
     ui->listWidget->hide();
     ui->treatmentLabel->hide();
@@ -87,16 +87,15 @@ void MainWindow::upButton(){
 
     QPushButton *upButtonPressed = qobject_cast<QPushButton*>(sender());
     if (upButtonPressed) {
-        // Check the background color of each QLabel and update accordingly
         if (ui->option1->palette().color(QPalette::Window) == Qt::yellow) {
-            ui->option1->setStyleSheet(""); // Reset background color of option1
-            ui->option3->setStyleSheet("background-color: yellow;"); // Set background color of option2 to yellow
+            ui->option1->setStyleSheet("");
+            ui->option3->setStyleSheet("background-color: yellow;");
         } else if (ui->option2->palette().color(QPalette::Window) == Qt::yellow) {
-            ui->option2->setStyleSheet(""); // Reset background color of option2
-            ui->option1->setStyleSheet("background-color: yellow;"); // Set background color of option3 to yellow
+            ui->option2->setStyleSheet("");
+            ui->option1->setStyleSheet("background-color: yellow;");
         } else if (ui->option3->palette().color(QPalette::Window) == Qt::yellow) {
-            ui->option3->setStyleSheet(""); // Reset background color of option3
-            ui->option2->setStyleSheet("background-color: yellow;"); // Set background color of option1 to yellow
+            ui->option3->setStyleSheet("");
+            ui->option2->setStyleSheet("background-color: yellow;");
         }
     }
 
@@ -107,16 +106,15 @@ void MainWindow::downButton() {
 
     QPushButton *downButtonPressed = qobject_cast<QPushButton*>(sender());
     if (downButtonPressed) {
-        // Check the background color of each QLabel and update accordingly
         if (ui->option1->palette().color(QPalette::Window) == Qt::yellow) {
-            ui->option1->setStyleSheet(""); // Reset background color of option1
-            ui->option2->setStyleSheet("background-color: yellow;"); // Set background color of option2 to yellow
+            ui->option1->setStyleSheet("");
+            ui->option2->setStyleSheet("background-color: yellow;");
         } else if (ui->option2->palette().color(QPalette::Window) == Qt::yellow) {
-            ui->option2->setStyleSheet(""); // Reset background color of option2
-            ui->option3->setStyleSheet("background-color: yellow;"); // Set background color of option3 to yellow
+            ui->option2->setStyleSheet("");
+            ui->option3->setStyleSheet("background-color: yellow;");
         } else if (ui->option3->palette().color(QPalette::Window) == Qt::yellow) {
-            ui->option3->setStyleSheet(""); // Reset background color of option3
-            ui->option1->setStyleSheet("background-color: yellow;"); // Set background color of option1 to yellow
+            ui->option3->setStyleSheet("");
+            ui->option1->setStyleSheet("background-color: yellow;");
         }
     }
 }
@@ -204,7 +202,7 @@ void MainWindow::forcePower() {
     if (batteryTimer->isActive()) {
         batteryTimer->stop();  // Stop the battery timer as well
     }
-    QMessageBox::warning(this, "Battery Depleted", "The device has been powered off due to battery depletion.");
+    ui->batteryCharge->setEnabled(true);
 
 }
 
@@ -219,11 +217,13 @@ void MainWindow::powerButton(){
        ui->selectButton->setEnabled(true);
        ui->downButton->setEnabled(true);
        ui->upButton->setEnabled(true);
+       ui->batteryCharge->setEnabled(false);
+       ui->contactButton->setEnabled(false);
 
        // Setting up the battery
        batteryTimer = new QTimer(this);
        connect(batteryTimer, &QTimer::timeout, this, &MainWindow::decreaseBatteryLevel);
-       batteryTimer->start(30000); // Every 30 seconds
+       batteryTimer->start(1000); // Every 1 second - perfect for testing and then showing battery recharge
 
      } else {
         ui->powerButton->setStyleSheet("background-color: green;");
@@ -306,63 +306,88 @@ void MainWindow::stopButton() {
     // Reset the UI
     ui->startButton->setEnabled(true);
     ui->stopButton->setEnabled(false);
-//    ui->treatmentLabel->hide();
-//    ui->progressBar->hide();
+
 }
 
 
 void MainWindow::decreaseBatteryLevel() {
     int val = ui->battery->value();
     if (val > 0) {
-        int newValue = val - 1;
-        ui->battery->setValue(newValue);
-
-        if (newValue <= 20) {
+        ui->battery->setValue(val - 1);  // Decrease battery by 1%
+        if (val - 1 <= 20) {
             ui->battery->setStyleSheet("QProgressBar::chunk { background-color: red; }");
+            if (val == 1) {
+                if (!rechargeTimer->isActive()) {
+                    ui->batteryCharge->setEnabled(true);  // Enable the charge button only if not currently charging
+                }
+            }
         } else {
-            ui->battery->setStyleSheet("");
+            ui->battery->setStyleSheet("");  // Reset to default
         }
-        if (newValue == 0) {
-            forcePower();
-        }
-
     } else {
         batteryTimer->stop();
         ui->battery->setStyleSheet("QProgressBar::chunk { background-color: red; }");
+        QMessageBox::warning(this, "Battery Depleted", "The device has been powered off due to battery depletion.");
         forcePower();
     }
 }
 
-// Finish this
-void MainWindow::checkContactStatus() {
-    // For simulation, randomly change contact status
-    if (qrand() % 40 == 0 && contactEstablished) { // Simulate contact loss
-        contactEstablished = false;
-        ui->contactLostLight->setStyleSheet("background-color: red;"); // Flash red light
-        contactLossTimer->start(5 * 60 * 1000); // Start 5-minute timer for contact reestablishment
-
-        // Show a message box indicating that contact is lost
-        QMessageBox::warning(this, "Contact Lost", "Contact with the EEG device has been lost. Please reestablish contact.");
+void MainWindow::incrementBatteryLevel() {
+    int val = ui->battery->value();
+    if (val < 100) {
+        ui->battery->setValue(val + 1);
+        ui->battery->setStyleSheet("QProgressBar::chunk { background-color: green; }");
+        if (val + 1 == 100) {
+            rechargeTimer->stop();
+            ui->batteryCharge->setEnabled(false);
+        }
     } else {
-        handleContactReestablished();
+        rechargeTimer->stop();
     }
 }
 
-// Finish this
+
+void MainWindow::chargeBattery() {
+    if (ui->battery->value() <= 20) {
+        rechargeTimer->start(100);
+    }
+}
+
+void MainWindow::checkContactStatus() {
+    if (qrand() % 40 == 0) {  // Simulate contact loss
+        contactEstablished = false;
+        if (!contactEstablished) {
+            ui->contactLostLight->setStyleSheet("background-color: red;");
+            contactLossTimer->start(10000);
+            ui->contactButton->setEnabled(true);
+            QMessageBox::warning(this, "Contact Lost", "Contact with the EEG device has been lost. Please reestablish contact.");
+
+        } else {
+            handleContactReestablished();
+        }
+    }
+}
+
+
 void MainWindow::handleContactLost() {
-    // Automatically turn off the device and erase the session
     QMessageBox::critical(this, "Contact Not Reestablished", "Failed to reestablish contact. The session will be terminated and the device will now turn off.");
-    forcePower();
+    forcePower();  // Force the power off
 }
 
-// Finish this
 void MainWindow::handleContactReestablished() {
-    if (!contactEstablished) {
-        contactEstablished = true;
-        ui->contactLight->setStyleSheet("background-color: blue;"); // Indicate contact initiation with blue light
-        contactLossTimer->stop(); // Stop the contact loss timer
-    }
+    contactEstablished = true;
+    ui->contactLight->setStyleSheet("background-color: blue;");
+    ui->contactLostLight->setStyleSheet("background-color: grey;");
+    contactLossTimer->stop();
+    QMessageBox::warning(this, "Contact Reestablished", "Contact with the EEG device has been reestablished.");
+
 }
+
+void MainWindow::contactButton() {
+    handleContactReestablished();
+    ui->contactButton->setEnabled(false);
+}
+
 
 void MainWindow::lightsOff() {
     // Setting all Lights off
@@ -372,7 +397,7 @@ void MainWindow::lightsOff() {
 }
 
 void MainWindow::threeButtonsOff() {
-    // Turning off the buttons for the session when not in that section
+
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(false);
     ui->pauseButton->setEnabled(false);
@@ -389,7 +414,6 @@ void MainWindow::functionalButtonsOff() {
 
 
 void MainWindow::onDone() {
-    // Allowing menu and power buttons again
      ui->menuButton->setEnabled(true);
      ui->powerButton->setEnabled(true);
      ui->option1->setText("Done");
@@ -412,18 +436,15 @@ void MainWindow::onAllBaselinesCalculated() {
 }
 
 void MainWindow::onTreatmentApplied(int siteIndex, int treatmentFrequency) {
-    // Update the UI to indicate treatment is being applied
     ui->treatmentLabel->setText(QString("Treating site %1 with frequency %2 Hz").arg(siteIndex + 1).arg(treatmentFrequency));
     ui->treatmentLight->setStyleSheet("background-color: green");
 }
 
 void MainWindow::onTreatmentComplete() {
-    // Update the UI to indicate treatment is complete
     ui->treatmentLabel->setText("Treatment completed for all sites");
 }
 
 void MainWindow::updateProgressBar(int progress) {
-    // Update the progress bar with the current progress
     ui->progressBar->setValue(progress);
 }
 
